@@ -18,14 +18,6 @@ class Router {
   }
 
   render() {
-    // this.node.innerHTML = "";
-    //
-    // const routeName = this.activeRoute();
-    // const newNode = document.createElement('p');
-    // newNode.innerHTML = routeName;
-    //
-    // this.node.appendChild(newNode);
-
     const component = this.activeRoute();
     if (component) {
       this.node.innerHTML = "";

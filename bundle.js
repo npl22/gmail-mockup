@@ -72,6 +72,8 @@
 
 const Router = __webpack_require__(1);
 const Inbox = __webpack_require__(2);
+const Sent = __webpack_require__(4);
+const Compose = __webpack_require__(5);
 
 document.addEventListener("DOMContentLoaded", function(event) {
   const sidebarNavLi = document.querySelectorAll(".sidebar-nav li");
@@ -89,7 +91,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
 });
 
 const routes = {
-  inbox: Inbox
+  inbox: Inbox,
+  sent: Sent,
+  compose: Compose
 };
 
 
@@ -117,14 +121,6 @@ class Router {
   }
 
   render() {
-    // this.node.innerHTML = "";
-    //
-    // const routeName = this.activeRoute();
-    // const newNode = document.createElement('p');
-    // newNode.innerHTML = routeName;
-    //
-    // this.node.appendChild(newNode);
-
     const component = this.activeRoute();
     if (component) {
       this.node.innerHTML = "";
@@ -188,10 +184,103 @@ let messages = {
 
 const MessageStore = {
   getInboxMessages: () => messages.inbox,
-  getSentMessages: () => messages.sent
+  getSentMessages: () => messages.sent,
+  getMessageDraft: () => messageDraft,
+
+  updateDraftField: (field, value) => {
+    messageDraft.field = value;
+  },
+  sendDraft: () => {
+    messages.sent.push(messageDraft);
+    messageDraft = new Message();
+  }
 };
 
+class Message {
+  constructor(from = "", to = "", subject = "", body = "") {
+    this.from = from;
+    this.to = to;
+    this.subject = subject;
+    this.body = body;
+  }
+}
+
+let messageDraft = new Message();
+
 module.exports = MessageStore;
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const MessageStore = __webpack_require__(3);
+
+const Sent = {
+  render: () => {
+    const messages = MessageStore.getSentMessages();
+    const ul = document.createElement('ul');
+    ul.className = 'messages';
+
+    messages.forEach((message) => {
+      ul.appendChild(Sent.renderMessage(message));
+    });
+
+    return ul;
+  },
+
+  renderMessage: (message) => {
+    const li = document.createElement('li');
+    li.className = 'message';
+    li.innerHTML = `<span class="to">${message.to}</span>
+      <span class="subject">${message.subject}</span>
+      <span class="body">${message.body}</span>`;
+    return li;
+  }
+};
+
+module.exports = Sent;
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const MessageStore = __webpack_require__(3);
+
+const Compose = {
+  render: () => {
+    const messages = MessageStore.getInboxMessages();
+    const div = document.createElement('div');
+    div.className = 'new-messages';
+
+    div.innerHTML = Compose.renderForm();
+
+    return div;
+  },
+
+  renderForm: () => {
+    const currentDraft = MessageStore.getMessageDraft();
+    console.log(currentDraft);
+
+    const htmlString = `
+    <p class="new-message-header">New Message</p>
+    <form class='compose-form'>
+      <input placeholder="Recipient" name="to" type="text"
+      value=${currentDraft.to}>
+      <input placeholder="Subject" name="subject" type="text"
+      value=${currentDraft.subject}>
+      <textarea name="body" rows="20">${currentDraft.body}</textarea>
+      <button type="submit" class="btn btn-primary
+      submit-message">Send</button>
+    </form>
+      `;
+
+    return htmlString;
+  }
+};
+
+module.exports = Compose;
 
 
 /***/ })

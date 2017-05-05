@@ -1,5 +1,7 @@
 const Router = require('./router.js');
 const Inbox = require('./inbox.js');
+const Sent = require('./sent.js');
+const Compose = require('./compose.js');
 
 document.addEventListener("DOMContentLoaded", function(event) {
   const sidebarNavLi = document.querySelectorAll(".sidebar-nav li");
@@ -17,5 +19,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 });
 
 const routes = {
-  inbox: Inbox
+  inbox: Inbox,
+  sent: Sent,
+  compose: Compose
 };
